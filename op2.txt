@@ -1,31 +1,19 @@
-name = "John"
-age = 25
-is_student = True
 
-courses = ["Math", "Physics", "Computer Science"]
+int newfunc(int a, int b)
+{
+    printf("Hi");
+}
+int main()
+{
+    int x, y, arr[50], arr_new[50];     if (x == y)
+    {
+        x = 5;
+    }
 
-def greet_user (name ) :
-    print (f"Hello, {name}! Welcome to the system.")
-
-def display_courses (course_list ) :
-    print("Enrolled Courses:")
-    for course in course_list:
-        print (f"- {course}")
-
-def introduce_student (name, age, courses ) :
-    print(f"My name is {name}, and I am {age} years old.")
-    display_courses(courses)
-
-def is_enrolled_in (courses, course_name ) :
-    return course_name in courses
-
-
-greet_user ( name ) 
-    
-   introduce_student ( name, age, courses ) 
-    
-   course_to_check = "Math"
-if is_enrolled_in (courses, course_to_check):
-        print (f"Yes, {name} is enrolled in {course_to_check}.")
-else:
-        print (f"No, {name} is not enrolled in {course_to_check}.")
+    printf("hello world");     char a;
+    x = 10 + 5;
+}
+float secondfunc(int c, int d, char f[50])
+{
+    printf("Whole New world");
+}

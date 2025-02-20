@@ -247,21 +247,42 @@ void add_token(token *tt, int *tp, char *word, char *type, int r, int c)
 
     (*tp)++;
 }
+int rn = 0, cn = 0;
 
 int getnexttoken(FILE *fp, token *tt, int *tp)
 {
     char word[50];
-    static int k = 0, rn = 0, cn = -1;
+    static int k = 0;
     static char n, next;
     int x = fread(&n, 1, 1, fp);
-    while (x)
+    if (x)
     {
-        cn++;
+
         if (isalpha(n) || n == '_')
         {
 
-            word[k++] = n;
+            while (isalnum(n) || n == '_')
+            {
+                word[k++] = n;
+                fread(&n, 1, 1, fp);
+                cn++;
+            }
+            fseek(fp, -1, SEEK_CUR);
+
+            word[k] = '\0';
+
+            if (isakeyword(word))
+            {
+                add_token(tt, tp, word, "keyword", rn, cn - k + 1);
+            }
+            else
+            {
+                add_token(tt, tp, word, "identifier", rn, cn - k + 1);
+            }
+            k = 0;
+            return 1;
         }
+
         else if (isdigit(n))
         {
 
@@ -269,31 +290,13 @@ int getnexttoken(FILE *fp, token *tt, int *tp)
             while (fread(&n, 1, 1, fp) && isdigit(n))
             {
                 word[k++] = n;
+                cn++;
             }
             word[k] = '\0';
-            add_token(tt, tp, word, "Numeric Literal", rn, cn);
+            add_token(tt, tp, word, "Numeric Literal", rn, cn - k + 1);
             fseek(fp, -1, SEEK_CUR);
+
             k = 0;
-            return 1;
-        }
-
-        else if (k > 0)
-        {
-            word[k] = '\0';
-
-            if (isakeyword(word))
-            {
-                add_token(tt, tp, word, "keyword", rn, cn - k - 1);
-            }
-            else
-            {
-
-                add_token(tt, tp, word, "identifier", rn, cn - k - 1);
-                fseek(fp, -1, SEEK_CUR);
-                cn--;
-            }
-            k = 0;
-
             return 1;
         }
 
@@ -303,10 +306,11 @@ int getnexttoken(FILE *fp, token *tt, int *tp)
             while (fread(&n, 1, 1, fp) && n != '"')
             {
                 word[k++] = n;
+                cn++;
             }
             word[k++] = '"';
             word[k] = '\0';
-            add_token(tt, tp, word, "literal string", rn, cn);
+            add_token(tt, tp, word, "literal string", rn, cn - k + 1);
             k = 0;
             return 1;
         }
@@ -331,7 +335,7 @@ int getnexttoken(FILE *fp, token *tt, int *tp)
                 }
                 else if (result == 1)
                 {
-                    add_token(tt, tp, t.token_name, t.type, rn, cn - 1);
+                    add_token(tt, tp, t.token_name, t.type, rn, cn);
                     fseek(fp, -1, SEEK_CUR);
 
                     return 1;
@@ -348,7 +352,7 @@ int getnexttoken(FILE *fp, token *tt, int *tp)
 
                 if (checkspecialsymbols(n, '\0', &t, rn, cn))
                 {
-                    add_token(tt, tp, t.token_name, t.type, rn, cn - 1);
+                    add_token(tt, tp, t.token_name, t.type, rn, cn);
                     return -1;
                 }
             }

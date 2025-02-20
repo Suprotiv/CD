@@ -231,7 +231,7 @@ int main()
     FILE *fptr;
     struct token temp;
     struct symbol curr;
-
+    char arg[100];
     int j;
     fptr = fopen("example.c", "r");
     while (1)
@@ -248,6 +248,7 @@ int main()
     // Creation of symbol table;
     for (int i = 0; i < tok_tab_iter; i++)
     {
+        strcpy(arg, "");
         j = i;
         if (strcmp(token_table[i].type, "identifier") == 0 && !in_symbol_table(token_table[i].name))
         {
@@ -268,14 +269,15 @@ int main()
 
             if (strcmp(token_table[i + 1].name, "(") == 0)
             {
-                j = i + 1;
-                char arg[100];
-                while (strcmp(token_table[j].name, ")") == 0)
+                j = i + 2;
+
+                while (strcmp(token_table[j].name, ")") != 0)
                 {
                     strcat(arg, token_table[j].name);
-                    strcat(arg, " , ");
+                    strcat(arg, "  ");
+                    j++;
                 }
-                strcpy(curr.arguements, arg);
+
                 strcat(curr.name, "()");
                 curr.size = 0;
             }
@@ -288,6 +290,7 @@ int main()
                 strcat(curr.name, "[]");
                 strcat(curr.type, " array");
             }
+            strcpy(curr.arguements, arg);
             symbol_table[symbol_table_iter++] = curr;
         }
     }
