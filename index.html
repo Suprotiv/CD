@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic HTML with Inline CSS and JS</title>
+    <!-- Inline CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+        }
+        #container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h1>Welcome to My Web Page</h1>
+        <p id="message">Click the buttons below to trigger different functions.</p>
+
+        <!-- Buttons to trigger JavaScript functions -->
+        <button onclick="changeText()">Change Text</button>
+        <button onclick="changeColor()">Change Background Color</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+
+    <!-- Inline JavaScript -->
+    <script>
+        // Function to change the text of the paragraph
+        function changeText() {
+            document.getElementById("message").innerHTML = "The text has been changed!";
+        }
+
+        // Function to change the background color of the page
+        function changeColor() {
+            document.body.style.backgroundColor = "#d0e7f9";
+        }
+
+        // Function to reset the text and background color
+        function reset() {
+            document.getElementById("message").innerHTML = "Click the buttons below to trigger different functions.";
+            document.body.style.backgroundColor = "#f0f0f0";
+        }
+    </script>
+
+</body>
+</html>
