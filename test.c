@@ -34,80 +34,6 @@ typedef struct
 
 SymbolTable main_symbol_table;
 
-void removepdirective(FILE *fr, FILE *fw)
-{
-    char line[1024];
-    int brace_count = 0;
-
-    while (fgets(line, sizeof(line), fr))
-    {
-        if (line[0] == '#' && brace_count == 0)
-        {
-            continue;
-        }
-
-        for (int i = 0; line[i] != '\0'; i++)
-        {
-            if (line[i] == '{')
-                brace_count++;
-            if (line[i] == '}')
-                brace_count--;
-            fwrite(&line[i], 1, 1, fw);
-        }
-    }
-}
-
-void removewhitespaces(FILE *fr, FILE *fw)
-{
-    int prev_space = 0;
-    char ch;
-
-    while (fread(&ch, 1, 1, fr))
-    {
-        if (ch == ' ' || ch == '\t')
-        {
-            if (!prev_space)
-            {
-                fwrite(" ", 1, 1, fw);
-                prev_space = 1;
-            }
-        }
-        else
-        {
-            fwrite(&ch, 1, 1, fw);
-            prev_space = 0;
-        }
-    }
-}
-
-void removecomments(FILE *fr, FILE *fw)
-{
-    char prev = '\0', curr;
-
-    while (fread(&curr, 1, 1, fr))
-    {
-        if (prev == '/' && curr == '/')
-        {
-            while (fread(&curr, 1, 1, fr) && curr != '\n')
-                ;
-            prev = '\0';
-        }
-        else
-        {
-            if (prev != '\0' && !(prev == '/' && curr == '/'))
-            {
-                fwrite(&prev, 1, 1, fw);
-            }
-            prev = curr;
-        }
-    }
-
-    if (prev != '\0' && prev != '/')
-    {
-        fwrite(&prev, 1, 1, fw);
-    }
-}
-
 int checkspecialsymbols(char n, char next, token *t, int rn, int cn)
 {
     t->row = rn;
@@ -297,6 +223,25 @@ int getnexttoken(FILE *fp, token *tt, int *tp)
             return 1;
         }
 
+        else if (n == '#')
+        {
+            while (fread(&n, 1, 1, fp) && n != '\n')
+                ;
+        }
+        else if (n == '/')
+        {
+            if (fread(&n, 1, 1, fp) && n == '/')
+                while (fread(&n, 1, 1, fp) && n != '\n')
+                    ;
+        }
+        else if (n == '/')
+        {
+            if (fread(&n, 1, 1, fp) && n == '*')
+                while (fread(&n, 1, 1, fp) && n != '*')
+                    ;
+            fread(&n, 1, 1, fp);
+        }
+
         else if (n == '"')
         {
             word[k++] = n;
@@ -411,28 +356,10 @@ int main()
 {
     FILE *fr, *fw1, *fw2;
 
-    fr = fopen("example.c", "r");
-    fw1 = fopen("op1.txt", "w");
-    removepdirective(fr, fw1);
-    fclose(fr);
-    fclose(fw1);
-
-    fw1 = fopen("op1.txt", "r");
-    fw2 = fopen("op2.txt", "w");
-    removecomments(fw1, fw2);
-    fclose(fw1);
-    fclose(fw2);
-
-    fw1 = fopen("op2.txt", "r");
-    fw2 = fopen("op1.txt", "w");
-    removewhitespaces(fw1, fw2);
-    fclose(fw1);
-    fclose(fw2);
-
     token tt[100];
     int tp = 0;
 
-    fw1 = fopen("op1.txt", "r");
+    fw1 = fopen("example.c", "r");
     while (getnexttoken(fw1, tt, &tp) != -1)
         ;
     fclose(fw1);

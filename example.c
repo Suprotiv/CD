@@ -9,7 +9,8 @@ int main()
     int x, y, arr[50], arr_new[50]; // new comment
     if (x == y)
     {
-        x = 5;
+        x = 5; /*muti
+        line comment */
     }
 
     printf("hello world"); // hello this is me
